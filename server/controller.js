@@ -87,18 +87,21 @@ module.exports = {
     });
   },
 
-  // reportQuestion: (req, res) => {
-    // const queryStr = ``;
-    // const queryArgs = [ ];
+  reportQuestion: (req, res) => {
+    const queryStr = `UPDATE questions
+      SET reported = true
+      WHERE question_id = $1`;
+    const queryArgs = [req.params.question_id];
 
-    // pool.query(queryStr, queryArgs, (err, results) => {
-    //   if (err) {
-    //     res.status(404).send(err);
-    //   } else {
-    //     res.status(200).send(results);
-    //   }
-    // });
-  // },
+    pool.query(queryStr, queryArgs, (err, results) => {
+      if (err) {
+        console.log(err);
+        res.status(404).send(err);
+      } else {
+        res.status(200).send(results);
+      }
+    });
+  },
 
   helpfulAnswer: (req, res) => {
     console.log('ha params ', req.params);
@@ -116,16 +119,19 @@ module.exports = {
     });
   },
 
-  // reportAnswer: (req, res) => {
-    // const queryStr = ``;
-    // const queryArgs = [ ];
+  reportAnswer: (req, res) => {
+    const queryStr = `UPDATE answers
+      SET reported = true
+      WHERE answer_id = $1`;
+    const queryArgs = [req.params.answer_id];
 
-    // pool.query(queryStr, queryArgs, (err, results) => {
-    //   if (err) {
-    //     res.status(404).send(err);
-    //   } else {
-    //     res.status(200).send(results);
-    //   }
-    // });
-  // }
+    pool.query(queryStr, queryArgs, (err, results) => {
+      if (err) {
+        console.log(err);
+        res.status(404).send(err);
+      } else {
+        res.status(200).send(results);
+      }
+    });
+  }
 }

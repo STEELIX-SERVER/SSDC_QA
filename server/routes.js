@@ -15,17 +15,17 @@ router.route('/qa/questions/:question_id/answers')
 router.route('/qa/questions/:question_id/helpful')
   .put(controller.helpfulQuestion)
 
-// // report question
-// router.route('/qa/questions/:question_id/report')
-//   .put(controller.reportQuestion)
+// report question
+router.route('/qa/questions/:question_id/report')
+  .put(controller.reportQuestion)
 
 // mark answer as helpful
 router.route('/qa/answers/:answer_id/helpful')
   .put(controller.helpfulAnswer)
 
-// // report an answer
-// router.route('/qa/questions/:answer_id/report')
-//   .put(controller.reportAnswer)
+// report an answer
+router.route('/qa/answers/:answer_id/report')
+  .put(controller.reportAnswer)
 
 
 module.exports = router;
