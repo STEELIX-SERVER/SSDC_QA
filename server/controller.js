@@ -24,7 +24,7 @@ module.exports = {
     });
   },
 
-  // addQuestion: function(req, res) => {
+  // addQuestion: (req, res) => {
   //   const queryStr = `INSERT INTO questions(product_id, question_body, question_date, asker_name, reported, question_helpfulness)
   //     VALUES ()`;
   //   const queryArgs = [req.product_id, req.body, req.name, req.email, ];
@@ -56,7 +56,7 @@ module.exports = {
     });
   },
 
-  // addAnswer: function(req, res) => {
+  // addAnswer: (req, res) => {
   //   const queryStr = `INSERT INTO answers(body, answer_date AS date, answerer_name, helpfulness, photos)
   //     VALUES ()`;
   //   const queryArgs = [ ];
@@ -70,20 +70,24 @@ module.exports = {
   //   });
   // },
 
-  // helpfulQuestion: function(req, res) => {
-  //   const queryStr = `UPDATE question_helpfulness SET `;
-  //   const queryArgs = [ ];
+  helpfulQuestion: (req, res) => {
+    // console.log('hq params ', req.params);
+    const queryStr = `UPDATE questions
+        SET question_helpfulness = question_helpfulness + 1
+        WHERE question_id = $1`;
+    const queryArgs = [req.params.question_id];
 
-  //   pool.query(queryStr, queryArgs, (err, results) => {
-  //     if (err) {
-  //       res.status(404).send(err);
-  //     } else {
-  //       res.status(200).send(results);
-  //     }
-  //   });
-  // },
+    pool.query(queryStr, queryArgs, (err, results) => {
+      if (err) {
+        console.log(err);
+        res.status(404).send(err);
+      } else {
+        res.status(200).send(results);
+      }
+    });
+  },
 
-  // reportQuestion: function(req, res) => {
+  // reportQuestion: (req, res) => {
     // const queryStr = ``;
     // const queryArgs = [ ];
 
@@ -96,20 +100,23 @@ module.exports = {
     // });
   // },
 
-  // helpfulAnswer: function(req, res) => {
-    // const queryStr = ``;
-    // const queryArgs = [ ];
+  helpfulAnswer: (req, res) => {
+    console.log('ha params ', req.params);
+    const queryStr = `UPDATE answers
+      SET helpfulness = helpfulness + 1
+      WHERE answer_id = $1`;
+    const queryArgs = [req.params.answer_id];
 
-    // pool.query(queryStr, queryArgs, (err, results) => {
-    //   if (err) {
-    //     res.status(404).send(err);
-    //   } else {
-    //     res.status(200).send(results);
-    //   }
-    // });
-  // },
+    pool.query(queryStr, queryArgs, (err, results) => {
+      if (err) {
+        res.status(404).send(err);
+      } else {
+        res.status(200).send(results);
+      }
+    });
+  },
 
-  // reportAnswer: function(req, res) => {
+  // reportAnswer: (req, res) => {
     // const queryStr = ``;
     // const queryArgs = [ ];
 

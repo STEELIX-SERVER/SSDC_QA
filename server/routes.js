@@ -11,17 +11,17 @@ router.route('/qa/questions/:question_id/answers')
   .get(controller.getAnswers)
 //   .post(controller.addAnswer)
 
-// // mark question as helpful
-// router.route('/qa/questions/:question_id/helpful')
-//   .put(controller.helpfulQuestion)
+// mark question as helpful
+router.route('/qa/questions/:question_id/helpful')
+  .put(controller.helpfulQuestion)
 
 // // report question
 // router.route('/qa/questions/:question_id/report')
 //   .put(controller.reportQuestion)
 
-// // mark answer as helpful
-// router.route('/qa/questions/:answer_id/helpful')
-//   .put(controller.helpfulAnswer)
+// mark answer as helpful
+router.route('/qa/answers/:answer_id/helpful')
+  .put(controller.helpfulAnswer)
 
 // // report an answer
 // router.route('/qa/questions/:answer_id/report')
