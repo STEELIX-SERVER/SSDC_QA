@@ -4,19 +4,27 @@ const pool = require('../db/index.js');
 module.exports = {
 
   getQuestions: (req, res) => {
-    // console.log('working');
-    // `SELECT product_id, (
-    //   SELECT array_agg(question_id, question_body, question_date, asker_name,
-    //     question_helpfulness, reported) as results)
-    //   FROM questions WHERE product_id = 1 AND reported = 'f' LIMIT 5
-    // FROM questions WHERE product_id = 1 AND reported = 'f' LIMIT 5`;
+    console.log('working');
+    const queryStr =
+      `SELECT json_build_object(
+        'product_id', product_id,
+        'results', array_agg(json_build_object(
+          'question_id', question_id,
+          'question_body', question_body,
+          'question_date', question_date,
+          'asker_name', asker_name,
+          'question_helpfulness', question_helpfulness,
+          'reported', reported
+        ))
+      ) FROM questions WHERE product_id = 1 AND reported = false GROUP BY product_id`;
 
-    const queryStr = `SELECT question_id, product_id, question_body, question_date,
-      asker_name, reported, question_helpfulness
-      FROM questions WHERE product_id = 1 AND reported = 'f' LIMIT 5`;
+    // const queryStr = `SELECT question_id, product_id, question_body, question_date,
+    //   asker_name, reported, question_helpfulness
+    //   FROM questions WHERE product_id = 1 AND reported = 'f' LIMIT 5`;
 
     pool.query(queryStr, (err, results) => {
       if (err) {
+        console.log(err);
         res.status(404).send(err);
       } else {
         res.status(200).send(results);
@@ -25,6 +33,7 @@ module.exports = {
   },
 
   // addQuestion: (req, res) => {
+  //   console.log('question req.body ', req.body);
   //   const queryStr = `INSERT INTO questions(product_id, question_body, question_date, asker_name, reported, question_helpfulness)
   //     VALUES ()`;
   //   const queryArgs = [req.product_id, req.body, req.name, req.email, ];
