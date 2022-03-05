@@ -5,7 +5,14 @@ module.exports = {
 
   getQuestions: (req, res) => {
     // console.log('working');
-    const queryStr = `SELECT id, product_id, question_body, question_date, asker_name, reported, question_helpfulness
+    // `SELECT product_id, (
+    //   SELECT array_agg(question_id, question_body, question_date, asker_name,
+    //     question_helpfulness, reported) as results)
+    //   FROM questions WHERE product_id = 1 AND reported = 'f' LIMIT 5
+    // FROM questions WHERE product_id = 1 AND reported = 'f' LIMIT 5`;
+
+    const queryStr = `SELECT question_id, product_id, question_body, question_date,
+      asker_name, reported, question_helpfulness
       FROM questions WHERE product_id = 1 AND reported = 'f' LIMIT 5`;
 
     pool.query(queryStr, (err, results) => {
@@ -33,8 +40,9 @@ module.exports = {
 
   getAnswers: (req, res) => {
     // coalesce
+    // SELECT array_agg(json_build_object('id', id, 'url', photo_url) as photos
     const queryStr = `SELECT answer_id, body, answer_date AS date, answerer_name, helpfulness, (
-      SELECT array_agg(photo_url)
+      SELECT array_agg(json_build_object('id', id, 'url', photo_url)) as photos
         FROM answers_photos INNER JOIN answers
         USING (answer_id) where answers_photos.answer_id = 5)
       FROM answers WHERE answers.answer_id = 5 AND reported = 'f' LIMIT 5`;
@@ -63,16 +71,16 @@ module.exports = {
   // },
 
   // helpfulQuestion: function(req, res) => {
-    // const queryStr = ``;
-    // const queryArgs = [ ];
+  //   const queryStr = `UPDATE question_helpfulness SET `;
+  //   const queryArgs = [ ];
 
-    // pool.query(queryStr, queryArgs, (err, results) => {
-    //   if (err) {
-    //     res.status(404).send(err);
-    //   } else {
-    //     res.status(200).send(results);
-    //   }
-    // });
+  //   pool.query(queryStr, queryArgs, (err, results) => {
+  //     if (err) {
+  //       res.status(404).send(err);
+  //     } else {
+  //       res.status(200).send(results);
+  //     }
+  //   });
   // },
 
   // reportQuestion: function(req, res) => {
