@@ -3,20 +3,46 @@ const pool = require('../db/index.js');
 
 module.exports = {
 
+  // `SELECT json_build_object(
+  //   'product_id', product_id,
+  //   'results', array_agg(json_build_object(
+  //     'question_id', question_id,
+  //     'question_body', question_body,
+  //     'question_date', question_date,
+  //     'asker_name', asker_name,
+  //     'question_helpfulness', question_helpfulness,
+  //     'reported', reported
+  //   ))
+  // ) FROM questions WHERE product_id = 1 AND reported = false GROUP BY product_id`;
+
+  // (SELECT json_build_object(
+  //   'id', answer_id,
+  //   'body', body,
+  //   'date', answer_date,
+  //   'anSwerer_name', answerer_name,
+  //   'hepfulness', helpfulness
+  // )) AS 68 FROM answers USING (question_id) GROUP BY question_id
+
   getQuestions: (req, res) => {
     console.log('working');
     const queryStr =
-      `SELECT json_build_object(
-        'product_id', product_id,
-        'results', array_agg(json_build_object(
+      `SELECT product_id,
+        (SELECT array_agg (json_build_object(
           'question_id', question_id,
           'question_body', question_body,
           'question_date', question_date,
           'asker_name', asker_name,
           'question_helpfulness', question_helpfulness,
-          'reported', reported
-        ))
-      ) FROM questions WHERE product_id = 1 AND reported = false GROUP BY product_id`;
+          'reported', questions.reported,
+          'answers', (SELECT json_build_object(
+            'id', answer_id,
+            'body', body,
+            'date', answer_date,
+            'answerer_name', answerer_name,
+            'helpfulness', helpfulness
+          ))
+        ))) AS results FROM questions LEFT JOIN answers USING (question_id)
+        WHERE product_id = 1 AND questions.reported = false GROUP BY product_id`;
 
     // const queryStr = `SELECT question_id, product_id, question_body, question_date,
     //   asker_name, reported, question_helpfulness
