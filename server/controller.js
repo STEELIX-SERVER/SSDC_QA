@@ -25,6 +25,7 @@ module.exports = {
 
   getQuestions: (req, res) => {
     console.log('working');
+    // need var for answers_phtotos.answer_id, product_id
     const queryStr =
       `SELECT product_id,
         (SELECT array_agg (json_build_object(
@@ -40,10 +41,16 @@ module.exports = {
               'body', body,
               'date', answer_date,
               'answerer_name', answerer_name,
-              'helpfulness', helpfulness
+              'helpfulness', helpfulness,
+              'photos', (select array_agg(json_build_object(
+                'id', id,
+                'url', photo_url
+              )) FROM answers_photos INNER JOIN answers
+              USING (answer_id) where answers_photos.answer_id = 5)
             ))
           ))
-        ))) AS results FROM questions LEFT JOIN answers USING (question_id)
+        ))) AS results FROM questions
+          LEFT JOIN answers USING (question_id)
         WHERE product_id = 1 AND questions.reported = false GROUP BY product_id`;
 
     // const queryStr = `SELECT question_id, product_id, question_body, question_date,
