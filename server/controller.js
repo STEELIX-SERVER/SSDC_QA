@@ -3,67 +3,6 @@ const pool = require('../db/index.js');
 
 module.exports = {
 
-  // `SELECT json_build_object(
-  //   'product_id', product_id,
-  //   'results', array_agg(json_build_object(
-  //     'question_id', question_id,
-  //     'question_body', question_body,
-  //     'question_date', question_date,
-  //     'asker_name', asker_name,
-  //     'question_helpfulness', question_helpfulness,
-  //     'reported', reported
-  //   ))
-  // ) FROM questions WHERE product_id = 1 AND reported = false GROUP BY product_id`;
-
-  // (SELECT json_build_object(
-  //   'id', answer_id,
-  //   'body', body,
-  //   'date', answer_date,
-  //   'anSwerer_name', answerer_name,
-  //   'hepfulness', helpfulness
-  // )) AS 68 FROM answers USING (question_id) GROUP BY question_id
-
-      // `SELECT answer_id FROM answers INNER JOIN questions USING (question_id)`
-    // need resolve answers_photos.answer_id, product_id
-    // (SELECT CAST (answer_id AS INTEGER) FROM answers WHERE answers.question_id = questions.question_id)
-
-
-    // 'answers', (SELECT json_build_object(
-    //   '68', (SELECT json_build_object(
-    //     'id', answer_id,
-    //     'body', body,
-    //     'date', answer_date,
-    //     'answerer_name', answerer_name,
-    //     'helpfulness', helpfulness
-    //   ))
-    // ))
-    // 'photos', (select array_agg(json_build_object(
-    //   'id', id,
-    //   'url', photo_url
-    // )) FROM answers_photos INNER JOIN answers
-    // USING (answer_id) where answers_photos.answer_id = 5 GROUP BY answer_id)
-//-------
-    // const queryStr =
-    //   `SELECT product_id,
-    //     (SELECT array_agg (json_build_object(
-    //       'question_id', question_id,
-    //       'question_body', question_body,
-    //       'question_date', question_date,
-    //       'asker_name', asker_name,
-    //       'question_helpfulness', question_helpfulness,
-    //       'reported', questions.reported
-
-    //     ))) AS results FROM questions
-
-    //     WHERE product_id = $1 AND questions.reported = false
-    //     GROUP BY product_id`;
-
-        // GROUP BY questions.product_id
-        // LEFT JOIN answers USING (question_id)
-    // const queryStr = `SELECT question_id, product_id, question_body, question_date,
-    //   asker_name, reported, question_helpfulness
-    //   FROM questions WHERE product_id = 1 AND reported = 'f' LIMIT 5`;
-
   getQuestions: (req, res) => {
     // console.log('q getall query ', req.query);
 
@@ -96,32 +35,6 @@ module.exports = {
       ) ORDER BY question_helpfulness DESC)
      as results FROM questions WHERE product_id = $1 AND reported = false GROUP BY product_id`;
 
-
-      // const queryStr =
-      // `SELECT product_id, json_agg( json_build_object (
-      //   'question_id', question_id,
-      //   'question_body', question_body,
-      //   'question_date', question_date,
-      //   'asker_name', asker_name,
-      //   'question_helfulness', question_helpfulness,
-      //   'answers', (
-      //     SELECT json_object_agg( answers.answer_id, json_build_object (
-      //       'id', answer_id,
-      //       'body', body
-      //       'date', answer_date,
-      //       'answerer_name', answerer_name,
-      //       'helpfulness', helpfulness,
-      //       'photos', (
-      //         SELECT json_agg( json_build_object (
-      //           'id', id,
-      //           'url', photo_url
-      //         )) FROM answers_photos ap WHERE ap.answer_id = a.answer_id
-      //       )
-      //     )) ORDER BY helpfulness DESC
-      //   ) FROM answers a WHERE a.question_id = q.question_id
-      // )) ORDER BY question_helpfulness DESC
-      // AS results FROM questions q WHERE product_id = $1 AND reported = false GROUP BY product_id`;
-
     const queryArgs= [req.query.product_id];
 
 
@@ -131,12 +44,6 @@ module.exports = {
         res.status(404).send(err);
       } else {
         console.log(results);
-
-        // const results = {
-        //   product_id: req.query.product_id,
-        //   results:
-        // }
-        // you can redefine something to send
         res.status(200).send(results.rows[0]);
       }
     });
