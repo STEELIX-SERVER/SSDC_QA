@@ -9,7 +9,7 @@ router.route('/qa/questions')
 // // get and add answers
 router.route('/qa/questions/:question_id/answers')
   .get(controller.getAnswers)
-//   .post(controller.addAnswer)
+  .post(controller.addAnswer)
 
 // mark question as helpful
 router.route('/qa/questions/:question_id/helpful')

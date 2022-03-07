@@ -65,9 +65,62 @@ module.exports = {
     //   FROM questions WHERE product_id = 1 AND reported = 'f' LIMIT 5`;
 
   getQuestions: (req, res) => {
-    console.log('q getall query ', req.query);
+    // console.log('q getall query ', req.query);
 
-    const queryStr = ``
+    let queryStr =
+      `SELECT product_id, json_agg(json_build_object(
+        'question_id', question_id,
+        'question_body', question_body,
+        'question_date', question_date,
+        'asker_name', asker_name,
+        'question_helpfulness', question_helpfulness,
+        'reported', reported,
+        'answers', (
+          SELECT coalesce(json_object_agg (
+            answers.answer_id, json_build_object (
+              'id', answer_id,
+              'body', body,
+              'date', answer_date,
+              'answerer_name', answerer_name,
+              'helpfulness', helpfulness,
+              'photos', (
+                SELECT coalesce(json_agg (json_build_object (
+                  'id', answer_id,
+                  'url', photo_url
+                )), '[]')
+              FROM answers_photos WHERE answers.answer_id = answers_photos.answer_id
+            )
+          ) ORDER BY helpfulness DESC ), '{}')
+        FROM answers WHERE questions.question_id = answers.question_id
+        )
+      ) ORDER BY question_helpfulness DESC)
+     as results FROM questions WHERE product_id = $1 AND reported = false GROUP BY product_id`;
+
+
+      // const queryStr =
+      // `SELECT product_id, json_agg( json_build_object (
+      //   'question_id', question_id,
+      //   'question_body', question_body,
+      //   'question_date', question_date,
+      //   'asker_name', asker_name,
+      //   'question_helfulness', question_helpfulness,
+      //   'answers', (
+      //     SELECT json_object_agg( answers.answer_id, json_build_object (
+      //       'id', answer_id,
+      //       'body', body
+      //       'date', answer_date,
+      //       'answerer_name', answerer_name,
+      //       'helpfulness', helpfulness,
+      //       'photos', (
+      //         SELECT json_agg( json_build_object (
+      //           'id', id,
+      //           'url', photo_url
+      //         )) FROM answers_photos ap WHERE ap.answer_id = a.answer_id
+      //       )
+      //     )) ORDER BY helpfulness DESC
+      //   ) FROM answers a WHERE a.question_id = q.question_id
+      // )) ORDER BY question_helpfulness DESC
+      // AS results FROM questions q WHERE product_id = $1 AND reported = false GROUP BY product_id`;
 
     const queryArgs= [req.query.product_id];
 
@@ -105,6 +158,7 @@ module.exports = {
   // },
 
   getAnswers: (req, res) => {
+    //do the order by helpfulness
 
     console.log('r getall query ', req.params);
     const question_id = req.params.question_id;
@@ -117,13 +171,13 @@ module.exports = {
         'body', body,
         'date', answer_date,
         'answerer_name', answerer_name,
-        'helfulness', helpfulness,
+        'helpfulness', helpfulness,
         'photos', (
           SELECT coalesce(array_agg(json_build_object(
             'id', id,
             'url', photo_url
           )), '{}') FROM answers_photos ap WHERE a.answer_id = ap.answer_id)
-      )) AS results FROM answers a WHERE question_id = $1 AND reported = false
+      ) ORDER BY helpfulness DESC) AS results FROM answers a WHERE question_id = $1 AND reported = false
       LIMIT ${count} OFFSET ${count * page - count}`;
 
       const queryArgs = [req.params.question_id];
@@ -144,19 +198,30 @@ module.exports = {
     });
   },
 
-  // addAnswer: (req, res) => {
-  //   const queryStr = `INSERT INTO answers(body, answer_date AS date, answerer_name, helpfulness, photos)
-  //     VALUES ()`;
-  //   const queryArgs = [ ];
+  addAnswer: (req, res) => {
+    console.log('add answer req.body ', req.body);
+    const date = new Date();
+    const body = req.body.body || '';
+    const name = req.body.name || '';
+    const email = req.body.email || '';
+    // photos?
+    const queryStr = `INSERT INTO answers (question_id, body, answer_date, answerer_name, answerer_email, reported, helpfulness)
+      VALUES ($1, ${body}, ${date}, ${name}, ${email}, 'f', 0)`;
 
-  //   pool.query(queryStr, queryArgs, (err, results) => {
-  //     if (err) {
-  //       res.status(404).send(err);
-  //     } else {
-  //       res.status(200).send(results);
-  //     }
-  //   });
-  // },
+      // const queryStr = `INSERT INTO answers (question_id, body, answer_date, answerer_name, answerer_email, reported, helpfulness)
+      // VALUES (1, 'test', 'test', 'test', 'test.com', 'f', 0)`;
+
+    const queryArgs = [req.params.question_id];
+
+    pool.query(queryStr, queryArgs, (err, results) => {
+      if (err) {
+        console.log(err);
+        res.status(404).send(err);
+      } else {
+        res.status(200).send(results);
+      }
+    });
+  },
 
   helpfulQuestion: (req, res) => {
     // console.log('hq params ', req.params);
