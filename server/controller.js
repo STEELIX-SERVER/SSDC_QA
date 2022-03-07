@@ -105,12 +105,12 @@ module.exports = {
   // },
 
   getAnswers: (req, res) => {
-    // const queryStr = `SELECT answer_id, body, answer_date AS date, answerer_name, helpfulness, (
-    //   SELECT array_agg(json_build_object('id', id, 'url', photo_url)) as photos
-    //     FROM answers_photos INNER JOIN answers
-    //     USING (answer_id) where answers_photos.answer_id = 5)
-    //   FROM answers WHERE answers.question_id = 5 AND reported = 'f' LIMIT 5`;
+
     console.log('r getall query ', req.params);
+    const question_id = req.params.question_id;
+    const page = req.params.page || 1;
+    const count = req.params.count || 5;
+
     const queryStr =
       `SELECT array_agg(json_build_object(
         'answer_id', answer_id,
@@ -123,7 +123,8 @@ module.exports = {
             'id', id,
             'url', photo_url
           )), '{}') FROM answers_photos ap WHERE a.answer_id = ap.answer_id)
-      )) AS results FROM answers a WHERE question_id = $1 AND reported = false`;
+      )) AS results FROM answers a WHERE question_id = $1 AND reported = false
+      LIMIT ${count} OFFSET ${count * page - count}`;
 
       const queryArgs = [req.params.question_id];
 
