@@ -6,6 +6,9 @@ module.exports = {
   getQuestions: (req, res) => {
     // console.log('q getall query ', req.query);
 
+    const page = req.params.page || 1;
+    const count = req.params.count || 5;
+
     let queryStr =
       `SELECT product_id, json_agg(json_build_object(
         'question_id', question_id,
@@ -33,7 +36,8 @@ module.exports = {
         FROM answers WHERE questions.question_id = answers.question_id
         )
       ) ORDER BY question_helpfulness DESC)
-     as results FROM questions WHERE product_id = $1 AND reported = false GROUP BY product_id`;
+     as results FROM questions WHERE product_id = $1 AND reported = false GROUP BY product_id
+     LIMIT ${count} OFFSET ${count * page - count}`;
 
     const queryArgs= [req.query.product_id];
 
@@ -51,9 +55,14 @@ module.exports = {
 
   // addQuestion: (req, res) => {
   //   console.log('question req.body ', req.body);
-  //   const queryStr = `INSERT INTO questions(product_id, question_body, question_date, asker_name, reported, question_helpfulness)
-  //     VALUES ()`;
-  //   const queryArgs = [req.product_id, req.body, req.name, req.email, ];
+  //   const date = new Date();
+  //   const body = req.body.body;
+  //   const name = req.body.name;
+  //   const email = req.body.email;
+
+  //   const queryStr = `INSERT INTO questions(product_id, question_body, question_date, asker_name, asnwer_email, reported, question_helpfulness)
+  //     VALUES ($1, ${body}, ${date}, ${name}, ${email}, 'f', 0)`;
+  //   const queryArgs = [req.query.product_id];
 
   //   pool.query(queryStr, queryArgs, (err, results) => {
   //     if (err) {
@@ -108,17 +117,18 @@ module.exports = {
   addAnswer: (req, res) => {
     console.log('add answer req.body ', req.body);
     const date = new Date();
-    const body = req.body.body || '';
-    const name = req.body.name || '';
-    const email = req.body.email || '';
+    // const body = req.body.body;
+    // const name = req.body.name;
+    // const email = req.body.email;
     // photos?
     const queryStr = `INSERT INTO answers (question_id, body, answer_date, answerer_name, answerer_email, reported, helpfulness)
-      VALUES ($1, ${body}, ${date}, ${name}, ${email}, 'f', 0)`;
+      VALUES ($1, $2, ${date}, $3, $4, 'f', 0)
+      RETURNING answer_id`;
 
       // const queryStr = `INSERT INTO answers (question_id, body, answer_date, answerer_name, answerer_email, reported, helpfulness)
       // VALUES (1, 'test', 'test', 'test', 'test.com', 'f', 0)`;
 
-    const queryArgs = [req.params.question_id];
+    const queryArgs = [req.params.question_id, req.body.body, req.body.name, req.body.email];
 
     pool.query(queryStr, queryArgs, (err, results) => {
       if (err) {
