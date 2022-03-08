@@ -100,3 +100,6 @@ SELECT answer_id, photo_url
 FROM temp_answers_photos;
 
 
+CREATE INDEX answerIndex ON answers_photos (answer_id);
+CREATE INDEX questionIndex ON answers (question_id);
+CREATE INDEX productIndex ON questions (product_id);
