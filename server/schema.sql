@@ -36,13 +36,13 @@ CREATE TABLE questions (
 
 CREATE TEMP TABLE temp_questions AS SELECT * FROM questions LIMIT 0;
 
-COPY temp_questions(product_id, question_body, question_date, asker_name, asker_email, reported, question_helpfulness)
+COPY temp_questions (question_id, product_id, question_body, question_date, asker_name, asker_email, reported, question_helpfulness)
 FROM '/Users/rockw/hackreactor/SDC/csv/questions.csv'
 DELIMITER ','
 CSV HEADER;
 
 INSERT INTO questions (product_id, question_body, question_date, asker_name, asker_email, reported, question_helpfulness)
-SELECT (product_id, question_body, question_date, asker_name, asker_email, reported, question_helpfulness)
+SELECT product_id, question_body, question_date, asker_name, asker_email, reported, question_helpfulness
 FROM temp_questions;
 
 -- Table 'answers'
@@ -65,13 +65,13 @@ CREATE TABLE answers (
 
 CREATE TEMP TABLE temp_answers AS SELECT * FROM answers LIMIT 0;
 
-COPY temp_answers(question_id, body, answer_date, answerer_name, answerer_email, reported, helpfulness)
+COPY temp_answers(answer_id, question_id, body, answer_date, answerer_name, answerer_email, reported, helpfulness)
 FROM '/Users/rockw/hackreactor/SDC/csv/answers.csv'
 DELIMITER ','
 CSV HEADER;
 
 INSERT INTO answers (question_id, body, answer_date, answerer_name, answerer_email, reported, helpfulness)
-SELECT (question_id, body, answer_date, answerer_name, answerer_email, reported, helpfulness)
+SELECT question_id, body, answer_date, answerer_name, answerer_email, reported, helpfulness
 FROM temp_answers;
 
 
@@ -90,11 +90,13 @@ CREATE TABLE answers_photos (
 
 CREATE TEMP TABLE temp_answers_photos AS SELECT * FROM answers_photos LIMIT 0;
 
-COPY temp_answers_photos(answer_id, photo_url)
+COPY answers_photos (id, answer_id, photo_url)
 FROM '/Users/rockw/hackreactor/SDC/csv/answers_photos.csv'
 DELIMITER ','
 CSV HEADER;
 
 INSERT INTO answers_photos (answer_id, photo_url)
-SELECT (answer_id, photo_url)
+SELECT answer_id, photo_url
 FROM temp_answers_photos;
+
+
