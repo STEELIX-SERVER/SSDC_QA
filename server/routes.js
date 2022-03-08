@@ -4,7 +4,7 @@ const router = require ('express').Router();
 // get and add questions
 router.route('/qa/questions')
   .get(controller.getQuestions)
-  // .post(controller.addQuestion)
+  .post(controller.addQuestion)
 
 // // get and add answers
 router.route('/qa/questions/:question_id/answers')

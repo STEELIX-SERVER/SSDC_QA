@@ -53,25 +53,26 @@ module.exports = {
     });
   },
 
-  // addQuestion: (req, res) => {
-  //   console.log('question req.body ', req.body);
-  //   const date = new Date();
-  //   const body = req.body.body;
-  //   const name = req.body.name;
-  //   const email = req.body.email;
+  addQuestion: (req, res) => {
+    console.log('question req.body ', req.body);
+    const date = Math.round(new Date().getTime()/1000);
+    // const body = req.body.body;
+    // const name = req.body.name;
+    // const email = req.body.email;
 
-  //   const queryStr = `INSERT INTO questions(product_id, question_body, question_date, asker_name, asnwer_email, reported, question_helpfulness)
-  //     VALUES ($1, ${body}, ${date}, ${name}, ${email}, 'f', 0)`;
-  //   const queryArgs = [req.query.product_id];
+    const queryStr = `INSERT INTO questions(product_id, question_body, question_date, asker_name, asker_email, reported, question_helpfulness)
+      VALUES ($1, $2, ${date}, $3, $4, 'f', 0)`;
+    const queryArgs = [req.query.product_id, req.body.body, req.body.name, req.body.email];
 
-  //   pool.query(queryStr, queryArgs, (err, results) => {
-  //     if (err) {
-  //       res.status(404).send(err);
-  //     } else {
-  //       res.status(200).send(results);
-  //     }
-  //   });
-  // },
+    pool.query(queryStr, queryArgs, (err, results) => {
+      if (err) {
+        console.log(err);
+        res.status(404).send(err);
+      } else {
+        res.status(200).send(results);
+      }
+    });
+  },
 
   getAnswers: (req, res) => {
     //do the order by helpfulness
@@ -115,7 +116,7 @@ module.exports = {
   },
 
   addAnswer: (req, res) => {
-    console.log('add answer req.body ', req.body);
+    // console.log('add answer req.body ', req.body);
     const date = Math.round(new Date().getTime()/1000);
     // const body = req.body.body;
     // const name = req.body.name;
