@@ -116,11 +116,10 @@ module.exports = {
 
   addAnswer: (req, res) => {
     console.log('add answer req.body ', req.body);
-    const date = new Date();
+    const date = Math.round(new Date().getTime()/1000);
     // const body = req.body.body;
     // const name = req.body.name;
     // const email = req.body.email;
-    // photos?
     const queryStr = `INSERT INTO answers (question_id, body, answer_date, answerer_name, answerer_email, reported, helpfulness)
       VALUES ($1, $2, ${date}, $3, $4, 'f', 0)
       RETURNING answer_id`;
