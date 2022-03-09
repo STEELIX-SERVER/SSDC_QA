@@ -13,7 +13,7 @@ module.exports = {
       `SELECT product_id, json_agg(json_build_object(
         'question_id', question_id,
         'question_body', question_body,
-        'question_date', question_date,
+        'question_date', to_char(to_timestamp(question_date), 'DD-MM-YYYY"T"HH24:MI:SS.MS"Z"'),
         'asker_name', asker_name,
         'question_helpfulness', question_helpfulness,
         'reported', reported,
@@ -22,7 +22,7 @@ module.exports = {
             answers.answer_id, json_build_object (
               'id', answer_id,
               'body', body,
-              'date', answer_date,
+              'date', to_char(to_timestamp(answer_date), 'DD-MM-YYYY"T"HH24:MI:SS.MS"Z"'),
               'answerer_name', answerer_name,
               'helpfulness', helpfulness,
               'photos', (
@@ -86,7 +86,7 @@ module.exports = {
       `SELECT array_agg(json_build_object(
         'answer_id', answer_id,
         'body', body,
-        'date', answer_date,
+        'date', to_char(to_timestamp(answer_date), 'DD-MM-YYYY"T"HH24:MI:SS.MS"Z"'),
         'answerer_name', answerer_name,
         'helpfulness', helpfulness,
         'photos', (
