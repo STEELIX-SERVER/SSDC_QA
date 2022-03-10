@@ -5,7 +5,7 @@ import { check, sleep } from 'k6';
 // export const requests = new Counter('http_reqs');
 
   export const options = {
-    vus: 30000,
+    vus: 100,
     duration: '15s',
 
   //   stages: [
