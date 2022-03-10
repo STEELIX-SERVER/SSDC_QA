@@ -5,7 +5,6 @@ module.exports = {
 
   getQuestions: (req, res) => {
     // console.log('q getall query ', req.query);
-
     const page = req.params.page || 1;
     const count = req.params.count || 5;
 
@@ -41,7 +40,6 @@ module.exports = {
 
     const queryArgs= [req.query.product_id];
 
-
     pool.query(queryStr, queryArgs, (err, results) => {
       if (err) {
         console.log(err);
@@ -54,7 +52,7 @@ module.exports = {
   },
 
   addQuestion: (req, res) => {
-    console.log('question req.body ', req.body);
+    // console.log('question req.body ', req.body);
     const date = Math.round(new Date().getTime()/1000);
     // const body = req.body.body;
     // const name = req.body.name;
@@ -75,9 +73,7 @@ module.exports = {
   },
 
   getAnswers: (req, res) => {
-    //do the order by helpfulness
-
-    console.log('r getall query ', req.params);
+    // console.log('r getall query ', req.params);
     const question_id = req.params.question_id;
     const page = req.params.page || 1;
     const count = req.params.count || 5;
@@ -122,8 +118,8 @@ module.exports = {
     // const name = req.body.name;
     // const email = req.body.email;
     const queryStr = `INSERT INTO answers (question_id, body, answer_date, answerer_name, answerer_email, reported, helpfulness)
-      VALUES ($1, $2, ${date}, $3, $4, 'f', 0)
-      RETURNING answer_id`;
+      VALUES ($1, $2, ${date}, $3, $4, 'f', 0)`;
+      // RETURNING answer_id`;
 
       // const queryStr = `INSERT INTO answers (question_id, body, answer_date, answerer_name, answerer_email, reported, helpfulness)
       // VALUES (1, 'test', 'test', 'test', 'test.com', 'f', 0)`;
@@ -174,7 +170,7 @@ module.exports = {
   },
 
   helpfulAnswer: (req, res) => {
-    console.log('ha params ', req.params);
+    // console.log('ha params ', req.params);
     const queryStr = `UPDATE answers
       SET helpfulness = helpfulness + 1
       WHERE answer_id = $1`;
