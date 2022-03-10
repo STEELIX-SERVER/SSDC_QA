@@ -18,9 +18,14 @@ export const requests = new Counter('http_reqs');
   //   },
   };
 
+  const randomNumber = (max, min) => (
+    Math.floor(Math.random() * (max - 1 + min) + min)
+  );
+  let count = randomNumber(100000, 1);
+
   export default function () {
 
-    const res = http.get('http://localhost:3000/api/qa/questions/1/answers');
+    const res = http.get(`http://localhost:3000/api/qa/questions/${count}/answers`);
 
     sleep(1);
 

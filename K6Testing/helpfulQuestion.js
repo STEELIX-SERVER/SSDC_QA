@@ -24,11 +24,11 @@ import { check, sleep } from 'k6';
 
   export default function () {
 
-    const url = `http://localhost:3000/api/qa/questions/${count}/report`;
+    const url = `http://localhost:3000/api/qa/questions/${count}/helpful`;
 
 
     const headers = { 'Content-Type': 'application/json' };
-    const data = { reported: 't' };
+    const data = { question_helpfulness:  1 };
 
     const res = http.put(url, JSON.stringify(data), { headers: headers });
 

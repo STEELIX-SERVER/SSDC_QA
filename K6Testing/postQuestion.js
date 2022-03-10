@@ -17,10 +17,14 @@ import { check, sleep } from 'k6';
   //     requests: ['count < 100'],
   //   },
   };
+  const randomNumber = (max, min) => (
+    Math.floor(Math.random() * (max - 1 + min) + min)
+  );
+  let count = randomNumber(100000, 1);
 
   export default function () {
 
-    const url = 'http://localhost:3000/api/qa/questions?product_id=2';
+    const url = `http://localhost:3000/api/qa/questions?product_id=${count}`;
     const payload = JSON.stringify({
       body: "postgres question add test",
       name: "R_tester",
