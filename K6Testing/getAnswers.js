@@ -5,14 +5,17 @@ import { Counter } from 'k6/metrics';
 export const requests = new Counter('http_reqs');
 
   export const options = {
-    stages: [
-      { target: 20, duration: '1m' },
-      { target: 15, duration: '1m' },
-      { target: 0, duration: '1m' },
-    ],
-    thresholds: {
-      requests: ['count < 100'],
-    },
+    vus: 10000,
+    duration: '15s',
+
+  //   stages: [
+  //     { target: 20, duration: '1m' },
+  //     { target: 15, duration: '1m' },
+  //     { target: 0, duration: '1m' },
+  //   ],
+  //   thresholds: {
+  //     requests: ['count < 100'],
+  //   },
   };
 
   export default function () {
@@ -22,8 +25,11 @@ export const requests = new Counter('http_reqs');
     sleep(1);
 
     const checkRes = check(res, {
-      'status is 200': (r) => r.status === 200
-      // 'response body': (r) => r.body.indexOf('Feel free to browse') !== -1,
+      'status is 200': (r) => r.status === 200,
+      'transaction time < 200ms': (r) => r.timings.duration < 200,
+      'transaction time < 500ms': (r) => r.timings.duration < 500,
+      'transaction time < 1000ms': (r) => r.timings.duration < 1000,
+      'transaction time < 2000ms': (r) => r.timings.duration < 2000
     });
   }
 
