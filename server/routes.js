@@ -14,7 +14,7 @@ router.route('/qa/questions')
   .get(controller.getQuestions)
   .post(controller.addQuestion)
 
-// // get and add answers
+// get and add answers
 router.route('/qa/questions/:question_id/answers')
   .get(controller.getAnswers)
   .post(controller.addAnswer)
